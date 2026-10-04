@@ -20,14 +20,12 @@
 #include "main.h"
 #include "adc.h"
 #include "i2c.h"
-#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include <string.h>
-#include "liquidcrystal_i2c.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,7 +47,6 @@
 
 /* USER CODE BEGIN PV */
 ADC_HandleTypeDef hadc1;
-UART_HandleTypeDef huart2;
 
 int adc_raw = 0;
 float voltage = 0.0f;
@@ -108,12 +105,10 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
   MX_ADC1_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
-  HD44780_Init(2);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -129,54 +124,8 @@ int main(void)
 	  // Convert to voltage (Vref = 3.3V, 12-bit resolution)
 	  voltage = (adc_raw * 3.3f) / 4095.0f;
 	  printf( "ADC: %d  Voltage: %.3f V\r\n", adc_raw, voltage);
-	    char line2[17];
 
-	    if (adc_raw < 356)
-	    {
-	        strcpy(line2, "Level 1        ");
-	    }
-	    else if (adc_raw < 712)
-	    {
-	        strcpy(line2, "Level 2        ");
-	    }
-	    else if (adc_raw < 1068)
-	    {
-	        strcpy(line2, "Level 3        ");
-	    }
-	    else if (adc_raw < 1424)
-	    {
-	        strcpy(line2, "Level 4        ");
-	    }
-	    else if (adc_raw < 1780)
-	    {
-	        strcpy(line2, "Level 5        ");
-	    }
-	    else if (adc_raw < 2136)
-	    {
-	        strcpy(line2, "Level 6        ");
-	    }
-	    else if (adc_raw < 2492)
-	    {
-	        strcpy(line2, "Level 7        ");
-	    }
-	    else if (adc_raw < 2848)
-	    {
-	        strcpy(line2, "Level 8        ");
-	    }
-	    else
-	    {
-	        strcpy(line2, "Level 9        ");
-	    }
-
-	    char line1[17];
-	    snprintf(line1, sizeof(line1), "V:%.2f          ", voltage);
-
-	    HD44780_SetCursor(0,0);
-	    HD44780_PrintStr(line1);
-	    HD44780_SetCursor(0,1);
-	    HD44780_PrintStr(line2);
-
-	  HAL_Delay(500);  // Sample every 500 ms
+	  HAL_Delay(500);  // delay every 500 ms
 
   }
   /* USER CODE END 3 */
